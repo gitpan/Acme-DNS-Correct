@@ -1,12 +1,12 @@
 package Acme::DNS::Correct;
 #
-# $Id: CGIForm.pm,v 1.28 2003/06/16 20:14:35 ctriv Exp $
+# $Id: Correct.pm,v 1.3 2003/09/21 18:00:47 ctriv Exp $
 #
 use strict;
 use vars qw($VERSION @ISA $ROOT_OF_EVIL);
 use Net::DNS;
 
-$VERSION = 0.1;
+$VERSION = 0.2;
 @ISA     = qw(Net::DNS::Resolver);
 
 $ROOT_OF_EVIL ||= $ENV{'ROOT_OF_EVIL'} || '64.94.110.11';
@@ -31,7 +31,7 @@ sub query {
 
 sub send {
 	my $self = shift;
-	my $ans  = $self->SUPER::send(@_);
+	my $ans  = $self->SUPER::send(@_) || return;
 	
  	_remove_evil($ans);
 	
@@ -77,11 +77,11 @@ Net::DNS manpages for comprehensive documentation on using this module.
 
 =head1 CONFIGURATION
 
-This module strips out answers from C<64.94.110.11>, a place of evil that you
+This module strips out answers of C<64.94.110.11>, a place of evil that you
 should keep far far away from your poor defenseless computer.  
 
-If you would rather ignore another root of evil, set the C<ROOT_OF_EVIL> 
-envirement variable, or the C<$Acme::DNS::ROOT_OF_EVIL> variable.
+If you would rather avoid another root of evil, set the C<ROOT_OF_EVIL> 
+envirement variable, or the C<$Acme::DNS::Correct::ROOT_OF_EVIL> variable.
 
 =head1 TODO
 

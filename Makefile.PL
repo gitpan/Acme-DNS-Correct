@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.PL,v 1.4 2002/11/27 05:54:42 ctriv Exp $
+# $Id: Makefile.PL,v 1.1 2003/09/21 17:52:15 ctriv Exp $
 #
 use ExtUtils::MakeMaker;
 
