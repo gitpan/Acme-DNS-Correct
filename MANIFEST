@@ -1,0 +1,7 @@
+Changes
+Correct.pm
+MANIFEST
+MANIFEST.skip
+Makefile.PL
+README
+t/00-test.t
