@@ -1,12 +1,12 @@
 package Acme::DNS::Correct;
 #
-# $Id: Correct.pm,v 1.3 2003/09/21 18:00:47 ctriv Exp $
+# $Id: Correct.pm,v 1.4 2003/09/26 03:15:26 ctriv Exp $
 #
 use strict;
 use vars qw($VERSION @ISA $ROOT_OF_EVIL);
 use Net::DNS;
 
-$VERSION = 0.2;
+$VERSION = 0.3;
 @ISA     = qw(Net::DNS::Resolver);
 
 $ROOT_OF_EVIL ||= $ENV{'ROOT_OF_EVIL'} || '64.94.110.11';
@@ -17,7 +17,7 @@ sub search {
 	
 	_remove_evil($ans);
 	
-	return $ans
+	return $ans->header->ancount ? $ans : undef;
 } 
 
 sub query {
@@ -26,7 +26,7 @@ sub query {
 	
 	_remove_evil($ans);
 	
-	return $ans
+	return $ans->header->ancount ? $ans : undef;
 } 
 
 sub send {

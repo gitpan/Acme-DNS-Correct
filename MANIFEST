@@ -5,3 +5,4 @@ MANIFEST.skip
 Makefile.PL
 README
 t/00-test.t
+META.yml                                 Module meta-data (added by MakeMaker)
