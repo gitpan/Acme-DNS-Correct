@@ -4,5 +4,7 @@ MANIFEST
 MANIFEST.skip
 Makefile.PL
 README
+t/00-pod.t
 t/00-test.t
+t/01-sneaky.t
 META.yml                                 Module meta-data (added by MakeMaker)

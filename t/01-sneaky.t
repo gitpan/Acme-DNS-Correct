@@ -1,16 +1,16 @@
-# $Id: 00-test.t,v 1.3 2003/09/28 04:19:38 ctriv Exp $
+# $Id: 01-sneaky.t,v 1.1 2003/09/28 04:09:15 ctriv Exp $
 
 
 use Test::More tests => 13;
 use strict;
 
 BEGIN { 
-    use_ok('Acme::DNS::Correct'); 
+    use_ok('Acme::DNS::Correct', 'sneaky'); 
 }
 
 
-my $res = Acme::DNS::Correct->new;
-isa_ok($res, 'Acme::DNS::Correct');
+my $res = Net::DNS::Resolver->new;
+isa_ok($res, 'Net::DNS::Resolver');
 
 $res->nameservers('serv1.cl.msu.edu');
 
@@ -26,17 +26,19 @@ SKIP: {
 	
 	ok(!scalar $ans->answer);
 	ok($ans->header->rcode eq 'NXDOMAIN');
-		
+	
+	Acme::DNS::Correct->import('sneaky');
+	
 	$res = Net::DNS::Resolver->new;
 	isa_ok($res, 'Net::DNS::Resolver');
 	
 	$res->nameservers('serv1.cl.msu.edu');
 	
-	ok($res->search('lkjsdfhsdfsdlkfjsdfjh.com'));
-	ok($res->query('lkjsdfhsdfsdlkfjsdfjh.com'));
+	ok(!$res->search('lkjsdfhsdfsdlkfjsdfjh.com'));
+	ok(!$res->query('lkjsdfhsdfsdlkfjsdfjh.com'));
 	
 	ok($ans = $res->send('lkjsdfhsdfsdlkfjsdfjh.com'));
 	
-	ok(scalar $ans->answer);
-	ok($ans->header->rcode eq 'NOERROR');	
+	ok(!scalar $ans->answer);
+	ok($ans->header->rcode eq 'NXDOMAIN');	
 }

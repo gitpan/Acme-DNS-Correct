@@ -1,33 +1,25 @@
 package Acme::DNS::Correct;
 #
-# $Id: Correct.pm,v 1.4 2003/09/26 03:15:26 ctriv Exp $
+# $Id: Correct.pm,v 1.6 2003/09/28 04:05:42 ctriv Exp $
 #
 use strict;
-use vars qw($VERSION @ISA $ROOT_OF_EVIL);
+use vars qw($VERSION @ISA $ROOT_OF_EVIL $BE_SNEAKY);
 use Net::DNS;
 
-$VERSION = 0.3;
+$VERSION = 0.4;
 @ISA     = qw(Net::DNS::Resolver);
 
 $ROOT_OF_EVIL ||= $ENV{'ROOT_OF_EVIL'} || '64.94.110.11';
 
-sub search {
-	my $self = shift;
-	my $ans  = $self->SUPER::search(@_) || return;
+sub import {
+	my ($class, @args) = @_;
 	
-	_remove_evil($ans);
-	
-	return $ans->header->ancount ? $ans : undef;
-} 
-
-sub query {
-	my $self = shift;
-	my $ans  = $self->SUPER::query(@_) || return;
-	
-	_remove_evil($ans);
-	
-	return $ans->header->ancount ? $ans : undef;
-} 
+	for (@args) {
+		if ($_ eq 'sneaky') {
+			$BE_SNEAKY++;
+		}
+	}
+}
 
 sub send {
 	my $self = shift;
@@ -56,6 +48,20 @@ sub _remove_evil {
 		}
 	}
 }
+	
+
+package Net::DNS::Resolver;
+
+sub send {
+	my $self = shift;
+	my $ans  = $self->SUPER::send(@_) || return;
+	
+ 	Acme::DNS::Correct::_remove_evil($ans) if $Acme::DNS::Correct::BE_SNEAKY;
+	
+	return $ans
+} 
+	
+		
 			
 
 =head1 NAME
@@ -74,6 +80,13 @@ Net::DNS manpages for comprehensive documentation on using this module.
  
  # use $res just like a Net::DNS::Resolver object, but the answers it 
  # returns will make sense, and be correct.
+ 
+ # Give Net::DNS::Resolver objects sanity:
+ use Acme::DNS::Correct 'sneaky';
+ 
+ # $res now gives sane answers
+ my $res = Net::DNS::Resolver->new;
+ 
 
 =head1 CONFIGURATION
 
